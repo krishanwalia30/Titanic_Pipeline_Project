@@ -1,5 +1,5 @@
 from titanic.constants import *
-from titanic.entity import DataIngestionConfig, DataTransformationConfig, DataValidationConfig
+from titanic.entity import DataIngestionConfig, DataTransformationConfig, DataValidationConfig, ModelTrainerConfig
 from titanic.utils.common import read_yaml, create_directories
 
 class ConfigurationManager:
@@ -51,3 +51,15 @@ class ConfigurationManager:
             data_path= config.data_path,
         )
         return data_transformation_config
+    
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+        config = self.config.model_trainer 
+
+        create_directories([config.root_dir])
+
+        model_trainer_config = ModelTrainerConfig(
+            root_dir= config.root_dir,
+            data_path= config.data_path
+        )
+
+        return model_trainer_config

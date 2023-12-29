@@ -15,3 +15,6 @@ data_transformation:
   root_dir: artifacts/data_transformation
   data_path: artifacts/data_ingestion
 
+model_trainer:
+  root_dir: artifacts/model_trainer
+  data_path: artifacts/data_transformation/transformed_data.csv
