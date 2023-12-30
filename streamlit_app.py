@@ -1,7 +1,8 @@
 import os
-from titanic.pipeline.prediction import PredictionPipeline
 import streamlit as st
 import pandas as pd
+
+from titanic.pipeline.prediction import PredictionPipeline
 
 
 class ClApp:

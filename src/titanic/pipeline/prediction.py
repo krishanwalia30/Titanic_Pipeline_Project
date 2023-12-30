@@ -1,11 +1,8 @@
-
 import os
-
 from sklearn.preprocessing import StandardScaler
 from titanic.utils.common import load_object
 from titanic.logging import logger
 import pandas as pd
-
 
 class PredictionPipeline:
 
