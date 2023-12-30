@@ -163,3 +163,5 @@ cython_debug/
 artifacts/data_ingestion
 
 
+research/idk.ipynb
+training.csv

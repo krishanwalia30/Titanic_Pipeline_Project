@@ -9,5 +9,4 @@ pyYAML
 types-PyYAML
 catBoost
 streamlit
-
 -e .
