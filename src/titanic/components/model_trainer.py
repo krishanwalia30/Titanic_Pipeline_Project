@@ -59,21 +59,22 @@ class ModelTrainer:
             }
         # For Hyper Parameter tuning 
         # model_report:dict = evaluate_models(x_train = x_train, y_train = y_train,x_test=x_test, y_test=y_test, models=models, param = params)
-        accuracy_list = []
+        accuracy_dict = {}
         for model_name, model in models.items():
             model.fit(x, y)
             logger.info(f"Model {model_name} has been trained successfully")
             y_pred = model.predict(x)
             accuracy = accuracy_score(y, y_pred)
-            accuracy_list.append(accuracy)
+            accuracy_dict[accuracy] = (model, model_name, accuracy)
         
         
-        best_model = list(models.values())[accuracy_list.index(max(accuracy_list))]
+        # best_model = list(models.values())[accuracy_list.index(max(accuracy_list))]
+        # best_model = max(list(accuracy_dict.values()))
+        best_model = accuracy_dict[max(accuracy_dict)][0]
         
-        model_path = Path(os.path.join(self.config.root_dir,"model.pkl"))
-        
+        model_path= Path(os.path.join(self.config.root_dir,"model.pkl"))
 
         save_object(path = model_path,obj =best_model)
-        logger.info(f"Model has been saved successfully with accuracy: {max(accuracy_list)}")
+        logger.info(f"Model Name: {accuracy_dict[max(accuracy_dict)][1]} has been saved successfully with accuracy: {accuracy_dict[max(accuracy_dict)][2]}")
 
         logger.info("Model Training Complete")
