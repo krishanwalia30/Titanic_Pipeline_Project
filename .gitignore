@@ -162,4 +162,4 @@ cython_debug/
 
 artifacts/data_ingestion
 
-catboost_info/*
+

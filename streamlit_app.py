@@ -1,11 +1,9 @@
-import os
 import streamlit as st
 import pandas as pd
-
 from titanic.pipeline.prediction import PredictionPipeline
 
 
-class ClApp:
+class ClientApp:
     def __init__(self):
         self.filename = "test.csv"
         self.classifier = PredictionPipeline(self.filename)
@@ -71,5 +69,5 @@ def main():
             st.write("There is very high hope that this person could have survived the tragedy.")
 
 if __name__ == '__main__':
-    clApp = ClApp()
+    clApp = ClientApp()
     main()
