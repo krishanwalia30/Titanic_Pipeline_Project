@@ -88,10 +88,10 @@ def load_object(path:Path):
     load object from file
     """
     try:
-        dir_path = os.path.dirname(path)
+        # dir_path = os.path.dirname(path)
 
-        with open(dir_path, 'rb') as file:
-            return pickle.loads(file)
+        with open(path, 'rb') as file:
+            return pickle.load(file)
         
     except Exception as e:
         logger.exception(e)

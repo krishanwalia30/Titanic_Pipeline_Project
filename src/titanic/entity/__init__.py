@@ -23,3 +23,10 @@ class DataTransformationConfig:
 class ModelTrainerConfig:
     root_dir:Path
     data_path:Path
+
+@dataclass
+class ModelEvaluationConfig:
+    root_dir:Path
+    data_path:Path
+    model_path:Path
+    metrics_file_name: Path
