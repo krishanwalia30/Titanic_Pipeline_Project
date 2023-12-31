@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import time
 import streamlit as st
 import pandas as pd
 from titanic.pipeline.prediction import PredictionPipeline
@@ -47,6 +48,7 @@ def main():
     if st.button("Train"):
         with st.spinner('Training the model'):
             os.system("dvc repro")
+            time.sleep(5)
         st.write("Model trained successfully")
         content = read_yaml(Path('metrics.yaml'))
 
