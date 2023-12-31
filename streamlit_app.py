@@ -1,6 +1,9 @@
+import os
+from pathlib import Path
 import streamlit as st
 import pandas as pd
 from titanic.pipeline.prediction import PredictionPipeline
+from titanic.utils.common import read_yaml
 
 
 class ClientApp:
@@ -41,6 +44,13 @@ def main():
     # Fare = st.sidebar.slider('Fare', 0.0, 600.0, 50.0)f
     Embarked = st.selectbox('Port of Embarkation',embark_options.keys(), format_func=embar_format_func)
 
+    if st.button("Train"):
+        with st.spinner('Training the model'):
+            os.system("dvc repro")
+        st.write("Model trained successfully")
+        content = read_yaml(Path('metrics.yaml'))
+
+        st.write(f"The accuracy of the model is {float(content.accuracy)*100}")
 
     if st.button('Predict', help="Click to know if the person has suvived"):
 
@@ -67,6 +77,7 @@ def main():
             st.write("There is very less hope that this person could have survived the tragedy.")
         else:
             st.write("There is very high hope that this person could have survived the tragedy.")
+
 
 if __name__ == '__main__':
     clApp = ClientApp()
