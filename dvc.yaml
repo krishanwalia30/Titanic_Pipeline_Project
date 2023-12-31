@@ -1,0 +1,6 @@
+stages:
+
+  # First Stage
+  data_ingestion:
+
+    cmd: python src/titanic/pipeline/stage_01_data_ingestion.py

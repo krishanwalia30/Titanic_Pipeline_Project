@@ -9,4 +9,5 @@ pyYAML
 types-PyYAML
 catBoost
 streamlit
+dvc
 -e .
