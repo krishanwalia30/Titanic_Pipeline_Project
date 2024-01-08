@@ -1,8 +1,21 @@
 import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 from titanic.entity import DataTransformationConfig
+# from titanic import logging
 from titanic.logging import logger
+
+
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+
+from titanic.utils.common import save_object
+
 
 class DataTransformation:
     def __init__(self, config: DataTransformationConfig):
@@ -12,25 +25,64 @@ class DataTransformation:
         df = pd.read_csv(os.path.join(self.config.data_path, "Titanic-Dataset.csv"))
         logger.info(f"Loaded {df.shape[0]} rows of data")
         return df
+    
+    def create_preprocessor(self):
 
-    def transform_data(self):
+        num_col = ['Age']
+        cat_col = ['Sex','Embarked']
+
+        num_pipe = Pipeline(
+            steps=[
+                # Handling the missing values
+                ('imputing_AGE',SimpleImputer(strategy='mean')),
+                # scaling 
+                ('scalling_data', StandardScaler(with_mean=False)),
+            ]
+        )
+
+        cat_pipe = Pipeline(
+            steps=[
+                # Handling the missing values
+                ('imputing_AGE',SimpleImputer(strategy='most_frequent')),
+                # encoding
+                ('one_hot_encoder',OneHotEncoder(handle_unknown='ignore')),
+                # scaling
+                ('scalling_data', StandardScaler(with_mean=False)),
+            ]
+        )
+
+        preprocessor = ColumnTransformer(
+            [
+                ('num_pipeline', num_pipe ,num_col),
+                ('cat_pipeline', cat_pipe ,cat_col),
+            ]
+        )
+        logger.info("Preprocessing pipeline")
+        return preprocessor
+
+        
+        
+    def initiate_pp(self):
+        preprocessor_obj = self.create_preprocessor()
         df = self.load_dataframe()
-
-        df = df.drop(columns=["PassengerId", "Name", "Ticket", "Fare", "Cabin"], axis=1)
         
-        df["Sex"] = df["Sex"].map({"male": 0, "female": 1})
+        x = df.drop('Survived', axis = 1)
+        y = df['Survived']
         
-        df = df.dropna(subset=["Embarked"])
+        # Train test split
+        x_train,x_test,y_train,y_test = train_test_split(x,y, random_state=42, test_size=0.2)
 
-        df['Age'] = df['Age'].fillna(value=int(df['Age'].mean()))
+        # Preprocessing
+        x_train = preprocessor_obj.fit_transform(x_train)
+        
+        x_test = preprocessor_obj.transform(x_test)
 
-        df["Embarked"] = df["Embarked"].map({"S": 0, "C": 1, "Q": 2})
+        save_object(path = Path(os.path.join(self.config.root_dir,"preprocessor.pkl")),obj =preprocessor_obj)
+        logger.info("Preprocessor Saved")
+        
+        return x_train,x_test,y_train,y_test
 
-        logger.info(f"Transformed {df.shape[0]} rows of data")
-
-        return df
     
     def save_transformed_data(self):
-        df = self.transform_data()
-        df.to_csv(os.path.join(self.config.root_dir, "transformed_data.csv"), index=False)
-        logger.info(f"Saved transformed data to {os.path.join(self.config.data_path, 'transformed_data.csv')}")
+        df = self.initiate_pp()
+        
