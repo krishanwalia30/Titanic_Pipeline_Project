@@ -87,8 +87,8 @@ stages:
     deps:
     - path: artifacts/model_trainer
       hash: md5
-      md5: 5be09a496260b2b58d1303e8bacc813d.dir
-      size: 33346
+      md5: 78138310f55d263841c0e501d7ea10e2.dir
+      size: 33336
       nfiles: 2
     - path: config/config.yaml
       hash: md5
