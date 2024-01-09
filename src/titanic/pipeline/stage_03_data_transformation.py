@@ -10,7 +10,7 @@ class DataTransformationTrainingPipeline:
         config = ConfigurationManager()
         data_tranformation_config = config.get_data_transformation_config()
         data_transformation = DataTransformation(data_tranformation_config)
-        data_transformation.save_transformed_data()
+        data_transformation.initiate_data_transformation()
 
 if __name__ == __name__:
     STAGE_NAME = 'Data Transformation Stage'

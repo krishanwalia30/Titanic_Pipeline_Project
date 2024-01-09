@@ -3,7 +3,6 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from titanic.entity import DataTransformationConfig
-# from titanic import logging
 from titanic.logging import logger
 
 
@@ -60,29 +59,30 @@ class DataTransformation:
         logger.info("Preprocessing pipeline")
         return preprocessor
 
+
+    def save_preprocessor(self, preprocessor_obj):
+        save_object(path = Path(self.config.preprocessor_path),obj =preprocessor_obj)
+        logger.info("Preprocessor Saved")
+
         
-        
-    def initiate_pp(self):
+    def initiate_data_transformation(self):
         preprocessor_obj = self.create_preprocessor()
         df = self.load_dataframe()
         
         x = df.drop('Survived', axis = 1)
         y = df['Survived']
         
-        # Train test split
-        x_train,x_test,y_train,y_test = train_test_split(x,y, random_state=42, test_size=0.2)
+
 
         # Preprocessing
+        x_train, x_test, y_train, y_test = train_test_split(x,y, random_state=42, test_size=0.2)
         x_train = preprocessor_obj.fit_transform(x_train)
-        
         x_test = preprocessor_obj.transform(x_test)
+        # self.save_data(x_train, x_test)
+        self.save_preprocessor(preprocessor_obj)
 
-        save_object(path = Path(os.path.join(self.config.root_dir,"preprocessor.pkl")),obj =preprocessor_obj)
-        logger.info("Preprocessor Saved")
-        
-        return x_train,x_test,y_train,y_test
+        train_arr = np.c_[x_train, np.array(y_train)]
+        test_arr = np.c_[x_test, np.array(y_test)]
 
-    
-    def save_transformed_data(self):
-        df = self.initiate_pp()
+        return (train_arr, test_arr,self.config.preprocessor_path)
         
