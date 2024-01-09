@@ -37,7 +37,7 @@ stages:
       - artifacts/data_validation
     
     outs:
-      - artifacts/data_transformation
+      - artifacts/data_transformation/preprocessor.pkl
     
   
   # Fourth Stage
@@ -47,6 +47,7 @@ stages:
 
     deps:
       - src/titanic/pipeline/stage_04_model_trainer.py
+      - src/titanic/pipeline/stage_03_data_transformation.py
       - config/config.yaml
     
     outs:
@@ -58,7 +59,10 @@ stages:
     cmd: python src/titanic/pipeline/stage_05_model_evaluation.py
 
     deps:
+      - artifacts/data_ingestion
       - src/titanic/pipeline/stage_05_model_evaluation.py
+      - artifacts/data_transformation/preprocessor.pkl
+      - artifacts/model_trainer/model.pkl
       - config/config.yaml
       - artifacts/model_trainer
     
