@@ -3,78 +3,45 @@ from pathlib import Path
 from sklearn.metrics import accuracy_score
 from titanic.entity import ModelTrainerConfig
 from titanic.logging import logger
-import pandas as pd
-
-from sklearn.tree import DecisionTreeClassifier
-from catboost import CatBoostClassifier
-from sklearn.ensemble import (
-    AdaBoostClassifier,
-    GradientBoostingClassifier,
-    RandomForestClassifier,
-)
-# from xgboost import XGBClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from titanic.utils.common import load_object, save_object
+from titanic.config.configuration import ConfigurationManager as ConfMan
+from titanic.components.data_transformation import DataTransformation 
 
-from sklearn.preprocessing import StandardScaler
-# from sklearn.tree import train_test_split
-
-from sklearn.model_selection import train_test_split
-
-from titanic.utils.common import save_object
+from sklearn.metrics import accuracy_score
 
 class ModelTrainer:
     def __init__(self, config:ModelTrainerConfig):
         self.config = config
 
-    def fetch_transformed_data(self):
-        df = pd.read_csv(self.config.data_path)
-        logger.info("Data has been fetched successfully")
-        return df
+    def fetch_preprocessor(self, preprocessor_file_path):
+        preprocessor_obj = load_object(Path(preprocessor_file_path))
+        return preprocessor_obj
     
-    def scaling_data(self):
-        df = self.fetch_transformed_data()
-
-        x = df.drop(columns='Survived', axis=1)
-        y = df['Survived']
-
-        sd = StandardScaler()
-        x = sd.fit_transform(x)
-
-
-        logger.info("Data has been scaled successfully")
-        return x,y
-
     def initiate_model_training(self):
-        x, y = self.scaling_data()
+        config = ConfMan()
+        data_tranformation_config = config.get_data_transformation_config()
+        data_transformation = DataTransformation(data_tranformation_config)
+        train_data, test_data, preprocessor_file_path = data_transformation.initiate_data_transformation()
+        x_train, y_train, x_test, y_test = (
+                train_data[:,:-1],
+                train_data[:,-1],
+                test_data[:,:-1],
+                test_data[:,-1]
+        )
 
-        models = {
-                "Random Forest": RandomForestClassifier(),
-                "Decision Tree": DecisionTreeClassifier(),
-                "Gradient Boosting": GradientBoostingClassifier(),
-                "K-Neighbors Regressor": KNeighborsClassifier(),
-                "CatBoosting Regressor": CatBoostClassifier(verbose=False),
-                "AdaBoost Regressor": AdaBoostClassifier()
-                # "XGBRegressor": XGBClassifier(),
-                # "Linear Regression": LinearRegression(),
-            }
-        # For Hyper Parameter tuning 
-        # model_report:dict = evaluate_models(x_train = x_train, y_train = y_train,x_test=x_test, y_test=y_test, models=models, param = params)
-        accuracy_dict = {}
-        for model_name, model in models.items():
-            model.fit(x, y)
-            logger.info(f"Model {model_name} has been trained successfully")
-            y_pred = model.predict(x)
-            accuracy = accuracy_score(y, y_pred)
-            accuracy_dict[accuracy] = (model, model_name, accuracy)
-        
-        
-        # best_model = list(models.values())[accuracy_list.index(max(accuracy_list))]
-        # best_model = max(list(accuracy_dict.values()))
-        best_model = accuracy_dict[max(accuracy_dict)][0]
-        
+        model = KNeighborsClassifier(n_neighbors=30,p=1, leaf_size=75) # 0.7877094972067039
+        # model = AdaBoostClassifier() # 0.7821229050279329
+        # model = CatBoostClassifier(learning_rate=0.0005, iterations=2000) # 0.7877094972067039
+
+        model.fit(x_train, y_train)
+
+        y_pred = model.predict(x_test)
+
+        accuracy_of_model = accuracy_score(y_test, y_pred)
+        logger.info(f"The accuracy of the model is: {accuracy_of_model}")
+
         model_path= Path(os.path.join(self.config.root_dir,"model.pkl"))
 
-        save_object(path = model_path,obj =best_model)
-        logger.info(f"Model Name: {accuracy_dict[max(accuracy_dict)][1]} has been saved successfully with accuracy: {accuracy_dict[max(accuracy_dict)][2]}")
-
-        logger.info("Model Training Complete")
+        save_object(path = model_path,obj =model)
+        logger.info(f"Model has been saved to: {model_path} with accuracy: {accuracy_of_model}")

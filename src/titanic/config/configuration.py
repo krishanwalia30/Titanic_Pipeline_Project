@@ -62,7 +62,7 @@ class ConfigurationManager:
 
         model_trainer_config = ModelTrainerConfig(
             root_dir= config.root_dir,
-            data_path= config.data_path
+            model_path= config.model_path
         )
 
         return model_trainer_config

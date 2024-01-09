@@ -25,7 +25,7 @@ class DataTransformationConfig:
 @dataclass(frozen=True)
 class ModelTrainerConfig:
     root_dir:Path
-    data_path:Path
+    model_path:Path
 
 @dataclass
 class ModelEvaluationConfig:
