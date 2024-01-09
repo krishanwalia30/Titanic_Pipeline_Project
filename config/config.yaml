@@ -20,8 +20,8 @@ data_transformation:
 
 model_trainer:
   root_dir: artifacts/model_trainer
-  data_path: artifacts/data_transformation/transformed_data.csv
-  preprocessor_path: artifacts/data_ingestion/preprocessor.pkl
+  # data_path: artifacts/data_transformation/transformed_data.csv
+  model_path: artifacts/model_trainer/model.pkl
 
 model_evaluation:
   root_dir: artifacts/model_evaluation
