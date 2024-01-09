@@ -39,7 +39,7 @@ class PredictionPipeline:
         logger.info("Preprocessor has been loaded successfully for prediction")
         
         # transforming the test data
-        preprocessor.transform(test_data)
+        test_data = preprocessor.transform(test_data)
         logger.info("Data has been transformed successfully for prediction")
 
         # predicting the test data
