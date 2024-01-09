@@ -14,10 +14,14 @@ data_validation:
 data_transformation:
   root_dir: artifacts/data_transformation
   data_path: artifacts/data_ingestion
+  test_data_path: artifacts/data_transformation/test_data.csv
+  train_data_path: artifacts/data_transformation/train_data.csv
+  preprocessor_path: artifacts/data_transformation/preprocessor.pkl # Make changes for this
 
 model_trainer:
   root_dir: artifacts/model_trainer
   data_path: artifacts/data_transformation/transformed_data.csv
+  preprocessor_path: artifacts/data_ingestion/preprocessor.pkl
 
 model_evaluation:
   root_dir: artifacts/model_evaluation
