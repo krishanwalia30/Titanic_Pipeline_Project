@@ -30,6 +30,7 @@ class ModelTrainerConfig:
 @dataclass
 class ModelEvaluationConfig:
     root_dir:Path
+    preprocessor_path:Path
     data_path:Path
     model_path:Path
     metrics_file_name: Path

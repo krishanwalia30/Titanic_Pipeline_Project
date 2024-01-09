@@ -1,2 +1,2 @@
-accuracy: '0.9347581552305961'
-confusion_matrix: "[[536  13]\n [ 45 295]]"
+accuracy: '0.7890011223344556'
+confusion_matrix: "[[468  81]\n [107 235]]"

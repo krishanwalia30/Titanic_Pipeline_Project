@@ -74,6 +74,7 @@ class ConfigurationManager:
 
         model_evaluation_config = ModelEvaluationConfig(
             root_dir= config.root_dir,
+            preprocessor_path= config.preprocessor_path,
             data_path= config.data_path,
             model_path= config.model_path,
             metrics_file_name= config.metrics_file_name
